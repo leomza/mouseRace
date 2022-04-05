@@ -6,13 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let components = [];
   let mouseX = 0;
   let mouseY = 0;
-  let started = true;
+  let started = 0;
   let interval = null;
 
   class GamePiece {
     constructor(color) {
       this.color = color;
-      //2 and -2 starting delta parameters arbitrarily
+      // 2 and -2 starting delta parameters arbitrarily
       this.dx = 2;
       this.dy = -2;
       this.speed = Math.random() * 2;
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //Generate random coordenates
     randomCoordenates(radius, height) {
       let x, y;
-      //If is called from foundEscape it's a Square and is the only time to create new random coordinates outside of constructor
+      //If is called from foundEscape it's a square and should create new random coordinates outside of constructor
       if (radius == undefined) {
         radius = this.height;
       }
@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     move() {
-      //To enable randomMove as rectangles modify this to check if ballRadius  = 0 if so ballRadius = this.width;
       let ballRadius = this.ballRadius;
       if (
         this.x + this.dx > gameboard.width - ballRadius ||
@@ -105,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.closePath();
     }
   }
-  // A Square is a Rectangle with a width = height and a different move
+  //A square is a rectangle with a width = height and a different move
   class Square extends Rectangle {
     constructor(height, color) {
       super(height, height, color);
@@ -145,14 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   gameboard.addEventListener("mouseout", () => {
-    if (started == false) {
-      alert("No moving outside the game board!");
+    if (started == 1) {
+      alert("Game Over, don't move outside the game board!");
       gameLoss();
     }
   });
 
   gameboard.addEventListener("mousedown", (event) => {
-    if (started == true) {
+    if (started == 0) {
       mouseX = event.clientX;
       mouseY = event.clientY;
       relativeX = mouseX - gameboard.offsetLeft;
@@ -167,12 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.floor(Math.random() * 20) + 20;
   };
 
-  // Start the game
+  //Start game
   const initializeGame = () => {
     //Start interval
-    started = true;
+    started = 1;
 
-    //Game starts with 2 random circles 2 chase rectangles and 1 escape square
+    //Set the game with 2 random circles, 2 chase rectangles and 1 escape square
     newTestBall = new Rectangle(randomRadius(), randomRadius(), "#eb0909");
     newTestBall2 = new Circle(randomRadius(), "#eb0909");
     newTestBall3 = new Square(randomRadius(), "#0eeb3a");
@@ -213,8 +212,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.clearRect(0, 0, gameboard.width, gameboard.height);
     drawBiggerScore();
     components = [];
-    started = true;
-    alert("Game Over 😪 Try Again!");
+    started = 0;
+    alert("Game Over");
   };
 
   //Start counting seconds
@@ -237,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
-    //Draw here in case get +5 points
+    //Draw in case get +5 points
     drawScore();
   };
 
@@ -251,12 +250,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawScore = () => {
     ctx.font = "16px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(`Score: ${score}`, 8, 20);
+    ctx.fillText("Score: " + score, 8, 20);
   };
 
   const drawBiggerScore = () => {
     ctx.font = "32px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(`Your Score: ${score}`, 220, 300);
+    ctx.fillText("Your Score: " + score, 220, 300);
   };
 });
